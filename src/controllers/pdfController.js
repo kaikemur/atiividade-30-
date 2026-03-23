@@ -1,27 +1,19 @@
 import AlunoModel from '../models/AlunoModel.js';
-import { gerarPdfTodos, gerarPdfAluno } from '../utils/pdfHelper.js';
+import { gerarPdfAluno, gerarPdfTodos } from '../utils/pdfHelper.js';
 
-export const relatorioPorId = async (req, res) => {
+export const relatorioTodos = async (req, res) => {
     try {
-        const { id } = req.params;
+        const registros = await AlunoModel.buscarTodos();
 
-        if (isNaN(id)) {
-            return res.status(400).json({ error: 'O ID enviado não é um número válido.' });
-        }
+        if (!registros || registros.length === 0)
+            return res.status(200).json({ message: 'Nenhum registro encontrado.' });
 
-        const aluno = await AlunoModel.buscarPorId(parseInt(id));
-
-        if (!aluno) {
-            return res.status(404).json({ error: 'Registro não encontrado.' });
-        }
-
-        const pdf = await gerarPdfAluno(aluno);
+        const pdf = await gerarPdfTodos(registros);
         return res
             .set({
                 'Content-Type': 'application/pdf',
-                'Content-Disposition': `inline; filename="aluno_${id}.pdf"`,
+                'Content-Disposition': 'inline; filename="alunos.pdf"',
             })
-
             .send(pdf);
     } catch (error) {
         console.error('Erro ao gerar PDF:', error);
@@ -29,4 +21,24 @@ export const relatorioPorId = async (req, res) => {
     }
 };
 
-// Felipe (Fortaleza)  // dos Anjos
+export const relatorioPorId = async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (isNaN(id))
+            return res.status(400).json({ error: 'O ID enviado não é um número válido.' });
+
+        const aluno = await AlunoModel.buscarPorId(parseInt(id));
+        if (!aluno) return res.status(404).json({ error: 'Registro não encontrado.' });
+
+        const pdf = await gerarPdfAluno(aluno);
+        return res
+            .set({
+                'Content-Type': 'application/pdf',
+                'Content-Disposition': `inline; filename="aluno_${id}.pdf"`,
+            })
+            .send(pdf);
+    } catch (error) {
+        console.error('Erro ao gerar PDF:', error);
+        return res.status(500).json({ error: 'Erro ao gerar relatório.' });
+    }
+};

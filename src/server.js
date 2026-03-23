@@ -13,12 +13,12 @@ app.get('/', (req, res) => {
     res.send('🚀 API funcionando');
 });
 
+
+app.use('/alunos', fotoRoutes);
+
+app.use('/alunos', pdfRoutes);
 // Rotas
 app.use('/alunos', alunosRoutes);
-
-app.use('/alunos', fotoRoutesRoutes);
-
-app.use('alunos', pdfRoutes);
 app.use('/uploads', express.static('uploads'))
 
 app.use((req, res) => {

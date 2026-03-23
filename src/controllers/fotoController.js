@@ -1,6 +1,6 @@
-import fs from ' fs/promisses';
-import AlunoModel from '../models/AlunoModel.js'
-import { processarFoto, removerFoto} from '../utils/fotoHelper';
+import fs from 'fs/promises';
+import AlunoModel from '../models/AlunoModel.js';
+import { processarFoto, removerFoto } from '../utils/fotoHelper.js';
 
 export const verFoto = async (req, res) => {
     try {
@@ -16,9 +16,9 @@ export const verFoto = async (req, res) => {
             return res.status(404).json({ error: 'Registro do aluno não foi encontrado.' });
         }
         if (!aluno.foto) {
-            return res.status(404).json({error: 'Este aluno não possui foto cadastrada '})
+            return res.status(404).json({ error: 'Este aluno não possui foto cadastrada ' });
         }
-        return res.sendFile(aluno.foto,{root:'-'})
+        return res.sendFile(aluno.foto, { root: '-' });
     } catch (error) {
         console.error('Erro ao buscar foto:', error);
         return res.status(500).json({ error: 'Erro ao buscar foto.' });
